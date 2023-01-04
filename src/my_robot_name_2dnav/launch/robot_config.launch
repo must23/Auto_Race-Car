@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>  
+  <param name="serial_baudrate"     type="int"    value="115200"/>
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+
+
+  <arg name="joy_dev" default="/dev/input/js0" />
+
+    <node pkg="joy" type="joy_node" name="joy_node">
+        <param name="dev" value="$(arg joy_dev)" />
+        <param name="deadzone" value="0.0" />
+        <param name="autorepeat_rate" value="0" />
+    </node>
+
+    <rosparam file="$(find ros_pca9685_drive)/config/joystick_xbox.yaml" command="load" />
+    <node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop" />
+
+    <node pkg="ros_pca9685_drive" type="pca9685_node.py" name="pca9685_drive" output="screen">
+        <rosparam file="$(find ros_pca9685_drive)/config/pca9685.yaml" command="load" />
+    </node>
+
+
+    <arg name="svo_file"             default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
+    <arg name="stream"               default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
+
+    <arg name="node_name"            default="zed_node" />
+    <arg name="camera_model"         default="zed2" />
+    <arg name="publish_urdf"         default="true" />
+
+    <arg name="camera_name"          default="zed2" />
+
+    <arg name="base_frame"           default="base_link" />
+
+    <arg name="cam_pos_x"             default="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_y"             default="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_z"             default="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll"              default="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pitch"             default="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw"               default="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+
+    <group ns="$(arg camera_name)">
+        <include file="$(find zed_wrapper)/launch/include/zed_camera.launch.xml">
+            <arg name="camera_name"         value="$(arg camera_name)" />
+            <arg name="svo_file"            value="$(arg svo_file)" />
+            <arg name="stream"              value="$(arg stream)" />
+            <arg name="node_name"           value="$(arg node_name)" />
+            <arg name="camera_model"        value="$(arg camera_model)" />
+            <arg name="base_frame"          value="$(arg base_frame)" />
+            <arg name="publish_urdf"        value="$(arg publish_urdf)" />
+            <arg name="cam_pos_x"           value="$(arg cam_pos_x)" />
+            <arg name="cam_pos_y"           value="$(arg cam_pos_y)" />
+            <arg name="cam_pos_z"           value="$(arg cam_pos_z)" />
+            <arg name="cam_roll"            value="$(arg cam_roll)" />
+            <arg name="cam_pitch"           value="$(arg cam_pitch)" />
+            <arg name="cam_yaw"             value="$(arg cam_yaw)" />
+        </include>
+    </group>
+
+</launch> 

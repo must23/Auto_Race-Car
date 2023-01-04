@@ -1,0 +1,13 @@
+<!--
+  Used for visualising rplidar in action.  
+  
+  It requires rplidar.launch.
+ -->
+<launch>
+  
+  <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+  <include file="$(find gmapping)/launch/slam_gmapping_pr2.launch" />
+  <include file="$(find zed_wrapper)/launch/zed2.launch" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
+</launch>
