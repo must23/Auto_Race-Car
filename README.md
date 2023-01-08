@@ -24,17 +24,16 @@ This project contains the necessary launch files and yaml parameters filets to r
 - [Zed-2 camera driver](https://github.com/stereolabs/zed-ros-wrapper)
 
 ## Important files
-- `move_base.launch`: dir: my_robot_name_2dnav/launch/, To run move base default navigation stack from ROS and TEB local path planner 
-- `dataset.py`: A helper class for training takes images and targets dataset, then provides pair-batches of the dataset during the training process.
-- `models.py`: This file contains an implementation of the U-Net modified version.
-- `prediction.py`: This file applies the saved trained semantic segmentation model to a video. It generates a new video with the segmentation results. 
-- `imageprocessing.py`: This file generates semantic segmentation masks given a label segmentation image. The masks are provided in separated folders based on the class name.
+- `my_robot_name_2dnav/launch/move_base.launch`: To run the move base default navigation stack from ROS and TEB local path planner 
+- `my_robot_name_2dnav/config/base_local_planner_params.yaml`: This file contains parameter setting to run the ROS navigation stack 
+- `ros_pca9685_drive/config/pca9685.yaml` : File contains parameters for the motor driver to set values such as published topic, the i2cbase address, and throttle range.
+- `ros_pca9685_drive/launch/pca9685_drive.launch`: This file launches a ROS to execute pca9685_node.py"and run the motor driver. 
+- `rplidar_ros/launch/view_rplidar.launch`: This file simultaneously runs SLAM gmapping, rplidar and Zed Camera as well as rviz visualization.
 
 ## Procedure to replicate experiment
-<!-- ## Experiment (1): One-Class Semantic Segmentation.
-In this experiment, a semantic segmentation for one class is done by approaching cars as a target class. The training is only applied on 5K~8K images and 1.2~1.5K images as a validation dataset. The experiement code is provided in `vehicle-segmentation` folder. The pixel accuracy reachs to 87%. The trained model is applied on a video recorded in Dubai, UAE.
-
-
-## Experiment (2): Multi-Classes Semantic Segmentation.
-In this experiment, we consider five classes: road, sidewalk, curb, crosswalk, and lane line. The experiement code is provided in `sidewalk-segmentation` folder. The accuracy reaches 95% pixel accuracy. 
-![alt text]([https://user-images.githubusercontent.com/20774864/147135092-ecad45f3-a57a-4abe-a918-adecd7c193c2.PNG](https://github.com/must23/Auto_Race-Car/blob/main/docs/rosgraph_.png)) -->
+1.	Clone the necessary packages into the src folder and build the packages using catkin_make command
+2.	Add the important files mentioned above in the respective directories.
+3.	Tweak the configuration and parameter values, especially the physical size of the car and the distance to the lidar/IMU (here, we use Zed camera’s odom topic)
+4.	Construct mapping and save it to the local directory to use later.
+5.	Launch pca9685_drive.launch, view_rplidar.launch, and move_base.launch respectively. If the laser_scan topic is not available, give permission to access the LiDAR port (e.g., sudo chmod 666 /dev/USBtty0) 
+6.	Set the goal point on the rviz to run autonomous navigation. 
